@@ -35,7 +35,15 @@ function Websocket(...args) {
 		this.on('close', () => log('close'));
 	}
 
-	this.send = data => { ws.send(data); this.emit('send', data); };
+	this.send = (data, cb) => {
+		try {
+			ws.send(data);
+			this.emit('send', data);
+		} catch (err) {
+			return cb && cb(err), undefined;
+		}
+		return cb && cb(), undefined;
+	};
 	this.close = (...args) => ws.close(...args);
 }
 
