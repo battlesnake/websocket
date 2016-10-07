@@ -4,9 +4,12 @@ const EventEmitter = require('eventemitter');
 
 Websocket.prototype = new EventEmitter();
 
+let socket_id = 0;
+
 /* "s" intentionally lowercase */
 function Websocket(...args) {
 	EventEmitter.call(this);
+	const id = ++socket_id;
 
 	const ws = new Impl(...args);
 
@@ -22,11 +25,14 @@ function Websocket(...args) {
 		ws.onclose = () => this.emit('close');
 	}
 
-	if (process.env.DEBUG_WEBSOCKET) {
-		this.on('message', msg => console.info('WS:RECV>', msg));
-		this.on('send', msg => console.info('WS:SEND>', msg));
-		this.on('open', () => console.info('WS:OPEN>', args));
-		this.on('close', () => console.info('WS:CLOSE>'));
+	this.debug = false;
+
+	if (this.debug || process.env.DEBUG_WEBSOCKET) {
+		const log = (cmd, ...args) => console.info(`WS #${id} ${cmd}>`, ...args);
+		this.on('message', msg => log('recv', msg));
+		this.on('send', msg => log('send', msg));
+		this.on('open', () => log('open'));
+		this.on('close', () => log('close'));
 	}
 
 	this.send = data => { ws.send(data); this.emit('send', data); };
