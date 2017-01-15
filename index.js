@@ -18,12 +18,17 @@ function Websocket(...args) {
 
 	const id = ++socket_id;
 
+	const do_wrap = args[0] === wrap;
+	if (do_wrap) {
+		args.shift();
+	}
+
 	const json = args[0] === 'json';
 	if (json) {
 		args.shift();
 	}
 
-	const ws = args[0] === wrap ? args[1] : new Impl(...args);
+	const ws = do_wrap ? args[0] : new Impl(...args);
 
 	const receive = data => {
 		if (json) {
