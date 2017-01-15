@@ -11,6 +11,7 @@ const wrap = {};
 Websocket.wrap = (...args) => new Websocket(wrap, ...args);
 
 Websocket.prototype = new EventEmitter();
+Websocket.prototype.constructor = Websocket;
 
 /* "s" intentionally lowercase */
 function Websocket(...args) {
