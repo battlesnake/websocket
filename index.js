@@ -86,6 +86,8 @@ function Websocket(...args) {
 		this.on('close', () => log('close'));
 	}
 
+	this.is_open = () => ws.readyState === Impl.OPEN;
+
 	this.send = data => send(data)
 		.then(
 			() => {
